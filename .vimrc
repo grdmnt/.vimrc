@@ -1,31 +1,44 @@
 let mapleader = ','
-let $FZF_DEFAULT_COMMAND = 'rg --hidden --files'
+let $FZF_DEFAULT_COMMAND = "rg --hidden --files -g '!.git/'"
 
+set lazyredraw
 set number
 set cursorline
 set ignorecase
 set smartcase
 set foldlevel=99
+set nocompatible
+set colorcolumn=101
+set foldmethod=indent
 
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn', '\%101v', 100)
+highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 filetype plugin indent on
 filetype on
 filetype indent on
-autocmd FileType ruby setlocal expandtab shiftwidth=2 tabstop=2
-autocmd FileType eruby setlocal expandtab shiftwidth=2 tabstop=2
-autocmd FileType yaml setlocal expandtab shiftwidth=2 tabstop=2
-autocmd BufWritePre *.rb :%s/\s\+$//e
+
+augroup vimrc_autocmd
+  autocmd!
+  autocmd FileType ruby setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType javascript setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType javascriptreact setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType eruby setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType yaml setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd BufWritePre *.rb :%s/\s\+$//e
+  autocmd BufWritePre *.slim :%s/\s\+$//e
+augroup END
 
 set rtp+=/usr/local/opt/fzf
 nmap <Leader>p :Files <CR>
+nmap <Leader>h :History <CR>
 nmap <Leader>f :Rg <CR>
 nmap <Leader>g :Magit <CR>
-nmap <Leader>l :.Rails <CR>
-nmap <Leader>t :Rails <CR>
+nmap <Leader>l :TestLast <CR>
+nmap <Leader>t :TestFile <CR>
+nmap <Leader>n :TestNearest <CR>
+nmap <Leader>R :ALEFix <CR>
 nmap <Leader>` :bo 10sp \| term <CR>
-nnoremap <Leader>R :! bundle exec rubocop --auto-correct % <CR>
+
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
@@ -33,13 +46,39 @@ nnoremap <C-H> <C-W><C-H>
 tnoremap <Esc> <C-\><C-n>
 nnoremap <s-f> za
 
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>Ngn
+
+nnoremap <S-j> <Esc>:m .+1<CR>
+nnoremap <S-k> <Esc>:m .-2<CR>
+vnoremap <S-j> :m '>+1<CR>gv=gv
+vnoremap <S-k> :m '<-2<CR>gv=gv
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+nmap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> <Leader>K :call <SID>show_documentation()<CR>
+nmap <leader>rn <Plug>(coc-rename)
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
 set splitbelow
 set splitright
+
+let g:ale_disable_lsp = 1
 
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'slim-template/vim-slim'
 Plug 'Yggdroot/indentLine'
-Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'dense-analysis/ale'
 Plug 'tpope/vim-fugitive'
@@ -48,20 +87,20 @@ Plug 'junegunn/fzf.vim'
 Plug 'jreybert/vimagit'
 Plug 'tpope/vim-rhubarb'
 Plug 'tommcdo/vim-fugitive-blame-ext'
+Plug 'junegunn/goyo.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-ruby/vim-ruby'
 Plug 'joshdick/onedark.vim'
-Plug 'ryanoasis/vim-devicons'
 Plug 'psliwka/vim-smoothie'
-Plug 'junegunn/goyo.vim'
 Plug 'vim-test/vim-test'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-dispatch'
 Plug 'mhinz/vim-startify'
-Plug 'majutsushi/tagbar'
 Plug 'matze/vim-move'
 Plug 'tpope/vim-vinegar'
-Plug 'vim-utils/vim-ruby-fold'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'vimwiki/vimwiki'
+Plug 'SirVer/ultisnips'
 call plug#end()
 
 let g:startify_change_to_dir=0
@@ -86,3 +125,29 @@ endif
 colorscheme onedark
 let g:airline_theme='onedark'
 let test#strategy = "dispatch"
+let test#ruby#use_binstubs = 0
+let g:dispatch_compilers = {
+      \ 'bundle exec': '',
+      \ 'clear;': '',
+      \ 'zeus': ''}
+
+function! ToggleTestingStrategy()
+  if g:test#strategy == "dispatch"
+    let g:test#strategy = "neovim"
+  else
+    let g:test#strategy = "dispatch"
+  endif
+  echo g:test#strategy
+endfunction
+
+nnoremap <Leader>T :call ToggleTestingStrategy() <CR>
+let g:ale_ruby_rubocop_executable = 'bundle'
+let g:ale_fixers = {
+	\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+	\   'javascript': ['eslint'],
+	\   'ruby': ['rubocop'],
+	\}
+let g:wordmotion_prefix = '\'
+let g:UltiSnipsExpandTrigger="`"
+let g:UltiSnipsEditSplit="vertical"
+
