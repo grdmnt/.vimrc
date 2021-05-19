@@ -148,6 +148,6 @@ let g:ale_fixers = {
 	\   'ruby': ['rubocop'],
 	\}
 let g:wordmotion_prefix = '\'
-let g:UltiSnipsExpandTrigger="`"
+let g:UltiSnipsExpandTrigger="<S-`>"
 let g:UltiSnipsEditSplit="vertical"
 
