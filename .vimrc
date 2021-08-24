@@ -21,9 +21,12 @@ augroup vimrc_autocmd
   autocmd!
   autocmd FileType ruby setlocal expandtab shiftwidth=2 tabstop=2
   autocmd FileType javascript setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType typescript setlocal expandtab shiftwidth=2 tabstop=2
   autocmd FileType javascriptreact setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType typescriptreact setlocal expandtab shiftwidth=2 tabstop=2
   autocmd FileType eruby setlocal expandtab shiftwidth=2 tabstop=2
   autocmd FileType yaml setlocal expandtab shiftwidth=2 tabstop=2
+  autocmd FileType python setlocal expandtab shiftwidth=2 tabstop=2
   autocmd BufWritePre *.rb :%s/\s\+$//e
   autocmd BufWritePre *.slim :%s/\s\+$//e
 augroup END
@@ -146,6 +149,7 @@ let g:ale_fixers = {
 	\   '*': ['remove_trailing_lines', 'trim_whitespace'],
 	\   'javascript': ['eslint'],
 	\   'ruby': ['rubocop'],
+        \   'erb': ['erb']
 	\}
 let g:wordmotion_prefix = '\'
 let g:UltiSnipsExpandTrigger="<S-`>"
