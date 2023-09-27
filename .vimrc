@@ -8,7 +8,7 @@ set ignorecase
 set smartcase
 set foldlevel=99
 set nocompatible
-set colorcolumn=101
+set colorcolumn=101,121
 set foldmethod=indent
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
@@ -33,6 +33,7 @@ augroup END
 
 set rtp+=/usr/local/opt/fzf
 nmap <Leader>p :Files <CR>
+nmap <Leader>c :Goyo <CR>
 nmap <Leader>h :History <CR>
 nmap <Leader>f :Rg <CR>
 nmap <Leader>g :Magit <CR>
@@ -48,6 +49,7 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 tnoremap <Esc> <C-\><C-n>
 nnoremap <s-f> za
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>Ngn
 
@@ -81,6 +83,8 @@ let g:ale_disable_lsp = 1
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'slim-template/vim-slim'
 Plug 'Yggdroot/indentLine'
+Plug 'zivyangll/git-blame.vim'
+Plug 'ray-x/starry.nvim'
 "Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'dense-analysis/ale'
@@ -125,7 +129,7 @@ if (empty($TMUX))
 endif
 
 "syntax on
-colorscheme onedark
+"colorscheme onedark
 let g:airline_theme='onedark'
 let test#strategy = "dispatch"
 let test#ruby#use_binstubs = 0
@@ -155,3 +159,8 @@ let g:wordmotion_prefix = '\'
 let g:UltiSnipsExpandTrigger="<S-`>"
 let g:UltiSnipsEditSplit="vertical"
 
+let starry_style="moonlight" 
+let starry_deep_black=v:true
+
+let g:goyo_width=130
+colorscheme moonlight
