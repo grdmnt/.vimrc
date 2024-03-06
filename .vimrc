@@ -10,6 +10,7 @@ set foldlevel=99
 set nocompatible
 set colorcolumn=101,121
 set foldmethod=indent
+set relativenumber
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
@@ -67,6 +68,11 @@ nmap <silent> gd <Plug>(coc-definition)
 nnoremap <silent> <Leader>K :call <SID>show_documentation()<CR>
 nmap <leader>rn <Plug>(coc-rename)
 
+imap <D-]> <Plug>(copilot-next)
+imap <D-[> <Plug>(copilot-previous)
+imap <D-.> <Plug>(copilot-accept-line)
+
+
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -87,6 +93,7 @@ Plug 'zivyangll/git-blame.vim'
 Plug 'ray-x/starry.nvim'
 "Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
+Plug 'github/copilot.vim'
 Plug 'dense-analysis/ale'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -108,7 +115,34 @@ Plug 'tpope/vim-vinegar'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vimwiki/vimwiki'
 Plug 'SirVer/ultisnips'
+Plug 'CopilotC-Nvim/CopilotChat.nvim'
 call plug#end()
+
+
+"let g:copilotchat_options = {
+"      \ 'show_help': 'yes',
+"      \ 'debug': v:false,
+"      \ 'disable_extra_info': 'no',
+"      \ 'proxy': '',
+"      \ }
+"
+"let g:copilot_chat_disable_separators = "no"
+"let g:copilot_chat_proxy = ""
+"lua _COPILOT_CHAT_GLOBAL_CONFIG = _COPILOT_CHAT_GLOBAL_CONFIG or {}
+"let g:copilot_chat_user_prompts = {
+"      \ 'Explain': 'Explain how it works.',
+"      \ 'Tests': 'Briefly explain how selected code works then generate unit tests.',
+"      \ }
+"let g:copilot_chat_show_help = 'yes'
+"let g:copilot_chat_language = 'English'
+"let g:copilot_chat_clear_chat_on_new_prompt = 'yes'
+"let copilot_chat_disable_separators = 'no'
+"let copilot_chat_hide_system_prompt = 'yes'
+
+nnoremap <leader>cce <cmd>CopilotChatExplain<cr>
+nnoremap <leader>cct <cmd>CopilotChatTests<cr>
+xnoremap <leader>ccv :CopilotChatVisual<cr>
+xnoremap <leader>ccx :CopilotChatInPlace<cr>
 
 let g:startify_change_to_dir=0
 let g:startify_change_to_vcs_root=1
@@ -164,3 +198,11 @@ let starry_deep_black=v:true
 
 let g:goyo_width=130
 colorscheme moonlight
+
+
+lua << EOF
+  local copilot_chat = require("CopilotChat")
+
+  -- REQUIRED
+  copilot_chat:setup({})
+EOF
